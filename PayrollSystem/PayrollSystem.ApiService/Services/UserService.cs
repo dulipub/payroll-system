@@ -38,7 +38,7 @@ public class UserService(
         var token = GenerateJwtToken(user, configuration);
         return TypedResults.Ok(new LoginResponse
         {
-            Token = token
+            Token = await token
         });
 
     }
@@ -62,19 +62,26 @@ public class UserService(
         var result = await userManager.CreateAsync(user, request.Password);
         if (result.Succeeded)
         {
+            await userManager.AddToRoleAsync(user, "Employee");
             return TypedResults.Ok();
         }
 
         return TypedResults.BadRequest(result.Errors.ToList());
     }
 
-    private static string GenerateJwtToken(User user, IConfiguration config)
+    private async Task<string> GenerateJwtToken(User user, IConfiguration config)
     {
         var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),
             new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
         };
+
+        var roles = await userManager.GetRolesAsync(user);
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

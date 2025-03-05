@@ -20,12 +20,10 @@ public static class UserApi
     {
         var api = app.MapGroup("api/user");
 
-        api.MapPost("/register", Register).AllowAnonymous();
+        api.MapPost("/register", Register).RequireAuthorization(policy => policy.RequireRole("Admin", "HumanResources"));
         api.MapPost("/login", Login).AllowAnonymous();
 
-        return api
-            .RequireRateLimiting("PerDeviceSliding")
-            .WithOpenApi();
+        return api.WithOpenApi();
     }
 
     [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]

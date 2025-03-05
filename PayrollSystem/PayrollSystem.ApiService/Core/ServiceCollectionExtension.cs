@@ -41,7 +41,12 @@ public static class ServiceCollectionExtension
             };
         });
 
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+            options.AddPolicy("Manager", policy => policy.RequireRole("Manager"));
+            options.AddPolicy("HumanResources", policy => policy.RequireRole("HumanResources"));
+        });
 
         return services;
     }
@@ -51,5 +56,23 @@ public static class ServiceCollectionExtension
         services.AddTransient<IUserService, UserService>();
 
         return services;
+    }
+
+    public static async Task AddIdentityRoles(this IServiceProvider services)
+    {
+        using (var scope = services.CreateScope())
+        {
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+            string[] roleNames = { "Employee", "Manager", "HumanResources", "Admin" };
+
+            foreach (var role in roleNames)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new Role { Name = role });
+                }
+            }
+        }
+
     }
 }

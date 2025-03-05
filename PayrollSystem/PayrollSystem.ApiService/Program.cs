@@ -1,14 +1,15 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+
 using PayrollSystem.ApiService.Core;
-using PayrollSystem.ApiService.Models.Identity;
-using System.Text;
-using System;
 using PayrollSystem.ApiService.Apis;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//add appsettings files
+builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile("appsettings.local.json")
+    .AddEnvironmentVariables();
 
 // Add service defaults & Aspire client integrations.
 builder.AddServiceDefaults();
@@ -26,7 +27,35 @@ builder.Services.AddOpenApi();
 builder.Services.AddAuthServices(builder.Configuration);
 builder.Services.AddAppServices(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+//swagger
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Payroll API", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -42,4 +71,5 @@ app.UseSwaggerUI();
 app.MapUserApi();
 
 
+await app.Services.AddIdentityRoles();
 app.Run();

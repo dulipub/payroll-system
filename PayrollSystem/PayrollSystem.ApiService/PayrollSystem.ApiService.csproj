@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Apis\Administration\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 
