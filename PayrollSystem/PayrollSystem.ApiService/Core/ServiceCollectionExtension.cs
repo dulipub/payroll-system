@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using PayrollSystem.ApiService.Models;
+using PayrollSystem.ApiService.Models.Identity;
+using PayrollSystem.ApiService.Services;
 using System.Text;
 
 namespace PayrollSystem.ApiService.Core;
 
-public static class AuthService
+public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddAuthServices(this IServiceCollection services, IConfiguration configuration)
     {
@@ -17,9 +19,8 @@ public static class AuthService
             options.Lockout.AllowedForNewUsers = true;
         });
 
-        services.AddIdentityApiEndpoints<User>()
+        services.AddIdentity<User, Role>()
             .AddEntityFrameworkStores<PayrollDbContext>()
-            //.AddRoles<User>()
             .AddDefaultTokenProviders();
 
         services.AddAuthentication(options =>
@@ -39,6 +40,15 @@ public static class AuthService
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
             };
         });
+
+        services.AddAuthorization();
+
+        return services;
+    }
+
+    public static IServiceCollection AddAppServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddTransient<IUserService, UserService>();
 
         return services;
     }

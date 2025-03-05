@@ -1,6 +1,12 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PayrollSystem.ApiService.Core;
+using PayrollSystem.ApiService.Models.Identity;
+using System.Text;
+using System;
+using PayrollSystem.ApiService.Apis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,20 +24,22 @@ builder.Services.AddOpenApi();
 
 
 builder.Services.AddAuthServices(builder.Configuration);
+builder.Services.AddAppServices(builder.Configuration);
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();
 app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthorization();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 
-app.MapDefaultEndpoints();
+app.MapUserApi();
+
 
 app.Run();
