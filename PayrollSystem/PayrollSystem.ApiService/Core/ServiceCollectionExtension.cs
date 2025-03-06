@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using PayrollSystem.ApiService.Models;
 using PayrollSystem.ApiService.Models.Identity;
+using PayrollSystem.ApiService.Repositories;
 using PayrollSystem.ApiService.Services;
 using System.Text;
 
@@ -51,9 +52,17 @@ public static class ServiceCollectionExtension
         return services;
     }
 
+    public static IServiceCollection AddRepositories(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+
+        return services;
+    }
+
     public static IServiceCollection AddAppServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddTransient<IUserService, UserService>();
+        services.AddTransient<IEmployeeService, EmployeeService>();
 
         return services;
     }

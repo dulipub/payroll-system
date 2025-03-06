@@ -19,13 +19,16 @@ builder.Services.AddProblemDetails();
 
 builder.AddNpgsqlDbContext<PayrollDbContext>(connectionName: "postgresdb");
 
-
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-
+//authenticatio
 builder.Services.AddAuthServices(builder.Configuration);
+
+//services & repositories
+builder.Services.AddRepositories(builder.Configuration);
 builder.Services.AddAppServices(builder.Configuration);
+
 builder.Services.AddEndpointsApiExplorer();
 
 //swagger
