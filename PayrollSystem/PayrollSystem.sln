@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollSystem.AppHost", "PayrollSystem.AppHost\PayrollSystem.AppHost.csproj", "{B0ACB4A5-9118-42DB-BE6D-AA1A77C065A7}"
 EndProject
@@ -9,6 +9,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollSystem.ApiService", "PayrollSystem.ApiService\PayrollSystem.ApiService.csproj", "{35E278AB-5481-4626-A085-666F29C08F8D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollSystem.Web", "PayrollSystem.Web\PayrollSystem.Web.csproj", "{4D206392-770B-44C5-82FA-3A553CCBD517}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollSystem.UnitTests", "PayrollSystem.UnitTests\PayrollSystem.UnitTests.csproj", "{9ABAF9FC-390F-49FD-B179-D78440222188}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{4D206392-770B-44C5-82FA-3A553CCBD517}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D206392-770B-44C5-82FA-3A553CCBD517}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D206392-770B-44C5-82FA-3A553CCBD517}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ABAF9FC-390F-49FD-B179-D78440222188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ABAF9FC-390F-49FD-B179-D78440222188}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ABAF9FC-390F-49FD-B179-D78440222188}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ABAF9FC-390F-49FD-B179-D78440222188}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PayrollSystem.ApiService.Core;
+using PayrollSystem.ApiService.Requests;
 using PayrollSystem.ApiService.Requests.Employee;
 using PayrollSystem.ApiService.Responses;
 using PayrollSystem.ApiService.Services;
@@ -17,6 +18,10 @@ public static class EmployeeApi
 
         api.MapGet("/profile", Get);
         api.MapPost("/update", Update);
+
+        //admistration endpoints
+        api.MapPost("/insert", Insert).RequireAuthorization(policy => policy.RequireRole("Admin", "HumanResources"));
+        api.MapPost("/list", List).RequireAuthorization(policy => policy.RequireRole("Admin", "HumanResources"));
 
         return api.RequireAuthorization().WithOpenApi();
     }
@@ -46,6 +51,30 @@ public static class EmployeeApi
     {
         var userId = httpRequest.GetClaim(JwtRegisteredClaimNames.Sub);
         var result = await service.Update(userId, request);
+        if (result == null)
+            return TypedResults.NotFound();
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<Results<Ok<EmployeeResponse>, NotFound>> Insert(
+        [FromBody] InsertEmployeeRequest request,
+        [FromServices] IEmployeeService service,
+        CancellationToken token
+    )
+    {
+        var result = await service.Insert(request);
+        if (result == null)
+            return TypedResults.NotFound();
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<Results<Ok<ListResponse<EmployeeResponse>>, NotFound>> List(
+    [FromBody] ListRequest request,
+    [FromServices] IEmployeeService service,
+    CancellationToken token
+)
+    {
+        var result = await service.List(request);
         if (result == null)
             return TypedResults.NotFound();
         return TypedResults.Ok(result);
