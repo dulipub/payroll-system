@@ -23,6 +23,8 @@ public static class UserApi
         api.MapPost("/register", Register).RequireAuthorization(policy => policy.RequireRole("Admin", "HumanResources"));
         api.MapPost("/login", Login).AllowAnonymous();
 
+        //reset password
+
         return api.WithOpenApi();
     }
 

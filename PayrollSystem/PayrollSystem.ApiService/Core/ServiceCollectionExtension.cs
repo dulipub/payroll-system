@@ -55,6 +55,12 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddRepositories(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+        services.AddTransient<IRepository<Project>, BaseRepository<Project>>();
+        services.AddTransient<IRepository<Department>, BaseRepository<Department>>();
+        services.AddTransient<IRepository<EmployeeProject>, BaseRepository<EmployeeProject>>();
+        services.AddTransient<IRepository<Leave>, BaseRepository<Leave>>();
+        services.AddTransient<IRepository<TimeSheet>, BaseRepository<TimeSheet>>();
+
 
         return services;
     }

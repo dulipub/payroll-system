@@ -15,10 +15,10 @@ public interface IRepository<TEntity> where TEntity : class, IBaseModel
     Task<bool> Delete(TEntity entity);
     Task<TEntity?> GetById(int id);
 
-    Task<IEnumerable<TEntity>> ListAscending( Expression<Func<TEntity, bool>> filter = null, Expression<Func<TEntity, object>> orderBy = null,
+    Task<List<TEntity>> ListAscending( Expression<Func<TEntity, bool>> filter = null, Expression<Func<TEntity, object>> orderBy = null,
         string includeProperties = "");
 
-    Task<IEnumerable<TEntity>> ListDescending( Expression<Func<TEntity, bool>> filter = null, Expression<Func<TEntity, object>> orderBy = null,
+    Task<List<TEntity>> ListDescending( Expression<Func<TEntity, bool>> filter = null, Expression<Func<TEntity, object>> orderBy = null,
         string includeProperties = "");
 }
 
@@ -55,7 +55,7 @@ public class BaseRepository<TEntity>(PayrollDbContext context) : IRepository<TEn
         return sucess > 0;
     }
 
-    public virtual async Task<IEnumerable<TEntity>> ListAscending(
+    public virtual async Task<List<TEntity>> ListAscending(
         Expression<Func<TEntity, bool>> filter = null,
         Expression<Func<TEntity, object>> orderBy = null,
         string includeProperties = "")
@@ -68,7 +68,7 @@ public class BaseRepository<TEntity>(PayrollDbContext context) : IRepository<TEn
         return await query.ToListAsync();
     }
 
-    public virtual async Task<IEnumerable<TEntity>> ListDescending(
+    public virtual async Task<List<TEntity>> ListDescending(
         Expression<Func<TEntity, bool>> filter = null,
         Expression<Func<TEntity, object>> orderBy = null,
         string includeProperties = "")

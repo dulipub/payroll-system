@@ -1,7 +1,5 @@
 ﻿namespace PayrollSystem.ApiService.Requests;
 
-
-
 public sealed class RegisterRequest
 {
     public required string Username { get; set; }

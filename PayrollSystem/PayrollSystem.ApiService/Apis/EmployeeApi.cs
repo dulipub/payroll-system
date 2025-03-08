@@ -69,7 +69,7 @@ public static class EmployeeApi
     }
 
     private static async Task<Results<Ok<ListResponse<EmployeeResponse>>, NotFound>> List(
-    [FromBody] ListRequest request,
+    [FromBody] EmployeeListRequest request,
     [FromServices] IEmployeeService service,
     CancellationToken token
 )

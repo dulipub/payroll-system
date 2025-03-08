@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using PayrollSystem.ApiService.Core;
+using PayrollSystem.ApiService.Helper;
 using PayrollSystem.ApiService.Models.Identity;
+using PayrollSystem.ApiService.Repositories;
 using PayrollSystem.ApiService.Requests;
 using PayrollSystem.ApiService.Responses;
 using System.IdentityModel.Tokens.Jwt;
@@ -20,6 +22,7 @@ public interface IUserService
 }
 public class UserService(
     UserManager<User> userManager,
+    IEmployeeRepository employeeRepository,
     IConfiguration configuration
     ) : IUserService
 {
@@ -71,10 +74,12 @@ public class UserService(
 
     private async Task<string> GenerateJwtToken(User user, IConfiguration config)
     {
+        var employee = await employeeRepository.GetByUserId(user.Id);
         var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+            new Claim(AppConstants.JWT_EMPLOYEE, employee?.Id.ToString() ?? string.Empty),
         };
 
         var roles = await userManager.GetRolesAsync(user);
