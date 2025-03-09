@@ -11,7 +11,7 @@ public interface ILeaveService
 {
     Task<LeaveResponse?> Get(int id, int employeeId);
     Task<bool?> Insert(CreateLeaveRequest request);
-    Task<LeaveResponse?> Update(UpdateLeaveRequest request);
+    Task<bool?> Update(UpdateLeaveRequest request);
     Task<ListResponse<LeaveResponse>> List(LeaveListRequest request);
     Task RemainingLeaves(int employeeId);
 }
@@ -83,14 +83,14 @@ public class LeaveService(
         };
     }
 
-    public async Task<LeaveResponse?> Update(UpdateLeaveRequest request)
+    public async Task<bool?> Update(UpdateLeaveRequest request)
     {
         var leave = await repository.GetById(request.Id);
         if (leave == null) return null;
 
         request.Adapt(leave);
         var result = await repository.Update(leave);
-        return result ? leave.Adapt<LeaveResponse>() : null;
+        return true;
     }
 
     public async Task RemainingLeaves(int employeeId)

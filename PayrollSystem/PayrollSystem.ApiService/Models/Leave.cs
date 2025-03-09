@@ -6,7 +6,6 @@ public class Leave : BaseModel
     public bool IsApproved { get; set; }
     public string? ApprovedUserId { get; set; }
     public int LeaveTypeId { get; set; }
-    public bool IsPaid { get; set; }
     public float LeaveDuration { get; set; }
 
     public required int EmployeeId { get; set; }
@@ -17,5 +16,6 @@ public class Leave : BaseModel
 public class LeaveType : BaseModel
 {
     public required string Type { get; set; }
+    public bool IsPaid { get; set; }
     public float MaximumAllowedDays { get; set; }
 }

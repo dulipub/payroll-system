@@ -71,6 +71,7 @@ public static class ServiceCollectionExtension
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<IEmployeeService, EmployeeService>();
         services.AddTransient<ILeaveService, LeaveService>();
+        services.AddTransient<ITimeSheetService, TimeSheetService>();
 
         return services;
     }

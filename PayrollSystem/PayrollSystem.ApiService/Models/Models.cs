@@ -8,16 +8,6 @@ public class Holiday
     public bool IsApproved { get; set; }
 }
 
-public class PayAdjustment
-{
-    public int Id { get; set; }
-    public string? Details { get; set; }
-    public DateTime Date { get; set; }
-    public string? Type { get; set; } 
-    public bool IsActive { get; set; }
-    public bool Recurring { get; set; }
-}
-
 public class Tax
 {
     public int Id { get; set; }

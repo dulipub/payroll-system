@@ -34,9 +34,10 @@ public static class LeavesApi
     }
 
     private static async Task<Results<Ok<LeaveResponse>, NotFound>> Get(
-    int id,
-    HttpRequest httpRequest,
-    [FromServices] ILeaveService service)
+        int id,
+        HttpRequest httpRequest,
+        [FromServices] ILeaveService service
+    )
     {
         var employeeId = int.Parse(httpRequest.GetClaim(AppConstants.JWT_EMPLOYEE));
         var result = await service.Get(id, employeeId);
@@ -77,9 +78,10 @@ public static class LeavesApi
     }
 
     private static async Task<Results<Ok<ListResponse<LeaveResponse>>, NotFound>> List(
-    HttpRequest httpRequest,
-    LeaveListRequest request,
-    [FromServices] ILeaveService service)
+        HttpRequest httpRequest,
+        LeaveListRequest request,
+        [FromServices] ILeaveService service
+    )
     {
         var employeeId = int.Parse(httpRequest.GetClaim(AppConstants.JWT_EMPLOYEE));
         request.EmployeeId = employeeId;

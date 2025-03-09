@@ -14,4 +14,5 @@ public class Employee : BaseModel
     public string? UserId { get; set; }
 
     public List<BankAccount>? BankAccounts { get; set; }
+    public List<EmployeePayAdjustment>? PayAdjustments { get; set; }
 }

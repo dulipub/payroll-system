@@ -2,6 +2,7 @@
 using PayrollSystem.ApiService.Core;
 using PayrollSystem.ApiService.Apis;
 using Microsoft.OpenApi.Models;
+using Google.Protobuf.WellKnownTypes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +75,7 @@ app.UseSwaggerUI();
 app.MapUserApi();
 app.MapEmployeeApi();
 app.MapLeavesApi();
+app.MapTimeSheetApi();
 
 await app.Services.AddIdentityRoles();
 app.Run();

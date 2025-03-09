@@ -29,9 +29,11 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
         );
 
         modelBuilder.Entity<LeaveType>().HasData(
-            new LeaveType { Id = 1, Type = "Annual Leave", MaximumAllowedDays = 14, IsActive = true },
-            new LeaveType { Id = 2, Type = "Sick Leave", MaximumAllowedDays = 7, IsActive = true },
-            new LeaveType { Id = 3, Type = "Casual Leave", MaximumAllowedDays = 7, IsActive = true }
+            new LeaveType { Id = 1, Type = "Annual Leave", MaximumAllowedDays = 14, IsActive = true, IsPaid = true },
+            new LeaveType { Id = 2, Type = "Sick Leave", MaximumAllowedDays = 7, IsActive = true, IsPaid = true },
+            new LeaveType { Id = 3, Type = "Casual Leave", MaximumAllowedDays = 7, IsActive = true, IsPaid = true },
+            new LeaveType { Id = 4, Type = "Nopay Leave", MaximumAllowedDays = 365, IsActive = true, IsPaid = false }
+
         );
     }
 

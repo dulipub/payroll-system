@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PayrollSystem.ApiService.Core;
 using PayrollSystem.ApiService.Helper;
 using PayrollSystem.ApiService.Requests.Employee;
+using PayrollSystem.ApiService.Requests.PayAdjustment;
 using PayrollSystem.ApiService.Requests.TimeSheet;
 using PayrollSystem.ApiService.Responses;
 using PayrollSystem.ApiService.Services;
@@ -10,31 +11,28 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace PayrollSystem.ApiService.Apis;
 
-public static class TimeSheetApi
+public static class PayAdjustmentApi
 {
-    public static RouteGroupBuilder MapTimeSheetApi(this IEndpointRouteBuilder app)
+    public static RouteGroupBuilder MapPayAdjustmentApi(this IEndpointRouteBuilder app)
     {
-        var api = app.MapGroup("api/timesheet");
+        var api = app.MapGroup("api/payadjustment");
 
         api.MapGet("/{id}", Get);
 
         api.MapPost("/", Insert);
         api.MapPost("/update", Update);
         api.MapPost("/list", List);
+        //add to employees
 
         api.MapDelete("/{id}", Delete);
 
-        //administration
-        //approve list
-        //approve
-
-        return api.RequireAuthorization().WithOpenApi();
+        return api.RequireAuthorization(policy => policy.RequireRole("Admin", "HumanResources")).WithOpenApi();
     }
 
-    private static async Task<Results<Ok<TimeSheetResponse>, NotFound>> Get(
+    private static async Task<Results<Ok<PayAdjustmentResponse>, NotFound>> Get(
         int id,
         HttpRequest httpRequest,
-        [FromServices] ITimeSheetService service
+        [FromServices] IPayAdjustmentService service
     )
     {
         var employeeId = int.Parse(httpRequest.GetClaim(AppConstants.JWT_EMPLOYEE));
@@ -45,14 +43,11 @@ public static class TimeSheetApi
     }
 
     private static async Task<Results<Ok<bool>, BadRequest>> Insert(
-        HttpRequest httpRequest,
-        [FromBody] CreateTimeSheetRequest request,
-        [FromServices] ITimeSheetService service,
+        [FromBody] CreatePayAdjustmentRequest request,
+        [FromServices] IPayAdjustmentService service,
         CancellationToken token
     )
     {
-        var employeeId = int.Parse(httpRequest.GetClaim(AppConstants.JWT_EMPLOYEE));
-        request.EmployeeId = employeeId;
         var result = await service.Insert(request);
         if (result == false)
             return TypedResults.BadRequest();
@@ -60,28 +55,22 @@ public static class TimeSheetApi
     }
 
     private static async Task<Results<Ok<bool>, BadRequest>> Update(
-        HttpRequest httpRequest,
-        [FromBody] UpdateTimeSheetRequest request,
-        [FromServices] ITimeSheetService service,
+        [FromBody] UpdatePayAdjustmentRequest request,
+        [FromServices] IPayAdjustmentService service,
         CancellationToken token
     )
     {
-        var employeeId = int.Parse(httpRequest.GetClaim(AppConstants.JWT_EMPLOYEE));
-        request.EmployeeId = employeeId;
         var result = await service.Update(request);
         if (result == false)
             return TypedResults.BadRequest();
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<ListResponse<TimeSheetResponse>>, NotFound>> List(
-        HttpRequest httpRequest,
-        TimeSheetListRequest request,
-        [FromServices] ITimeSheetService service
+    private static async Task<Results<Ok<ListResponse<PayAdjustmentResponse>>, NotFound>> List(
+        PayAdjustmentListRequest request,
+        [FromServices] IPayAdjustmentService service
     )
     {
-        var employeeId = int.Parse(httpRequest.GetClaim(AppConstants.JWT_EMPLOYEE));
-        request.EmployeeId = employeeId;
         var result = await service.List(request);
         if (result == null)
             return TypedResults.NotFound();
