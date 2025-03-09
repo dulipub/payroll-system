@@ -32,8 +32,7 @@ public static class EmployeeApi
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     private static async Task<Results<Ok<EmployeeResponse>, NotFound>> Get(
         HttpRequest httpRequest,
-        [FromServices] IEmployeeService service
-    )
+        [FromServices] IEmployeeService service)
     {
         var userId = httpRequest.GetClaim(JwtRegisteredClaimNames.Sub);
         var result = await service.GetByUserId(userId);
@@ -45,9 +44,7 @@ public static class EmployeeApi
     private static async Task<Results<Ok<EmployeeResponse>, NotFound>> Update(
         HttpRequest httpRequest,
         [FromBody] UpdateEmployeeRequest request,
-        [FromServices] IEmployeeService service,
-        CancellationToken token
-    )
+        [FromServices] IEmployeeService service)
     {
         var userId = httpRequest.GetClaim(JwtRegisteredClaimNames.Sub);
         var result = await service.Update(userId, request);
@@ -58,9 +55,7 @@ public static class EmployeeApi
 
     private static async Task<Results<Ok<EmployeeResponse>, NotFound>> Insert(
         [FromBody] InsertEmployeeRequest request,
-        [FromServices] IEmployeeService service,
-        CancellationToken token
-    )
+        [FromServices] IEmployeeService service)
     {
         var result = await service.Insert(request);
         if (result == null)
@@ -69,10 +64,8 @@ public static class EmployeeApi
     }
 
     private static async Task<Results<Ok<ListResponse<EmployeeResponse>>, NotFound>> List(
-    [FromBody] EmployeeListRequest request,
-    [FromServices] IEmployeeService service,
-    CancellationToken token
-)
+        [FromBody] EmployeeListRequest request,
+        [FromServices] IEmployeeService service)
     {
         var result = await service.List(request);
         if (result == null)

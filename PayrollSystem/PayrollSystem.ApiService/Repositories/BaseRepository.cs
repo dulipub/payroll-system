@@ -1,10 +1,9 @@
 ﻿using PayrollSystem.ApiService.Core;
 using PayrollSystem.ApiService.Models;
-using static Grpc.Core.Metadata;
-using System.Threading;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Linq;
+using System.Threading;
 
 namespace PayrollSystem.ApiService.Repositories;
 
@@ -14,6 +13,8 @@ public interface IRepository<TEntity> where TEntity : class, IBaseModel
     Task<bool> Update(TEntity entity);
     Task<bool> Delete(TEntity entity);
     Task<TEntity?> GetById(int id);
+
+    Task<List<TEntity>> GetAll();
 
     Task<List<TEntity>> ListAscending( Expression<Func<TEntity, bool>> filter = null, Expression<Func<TEntity, object>> orderBy = null,
         string includeProperties = "");
@@ -53,6 +54,11 @@ public class BaseRepository<TEntity>(PayrollDbContext context) : IRepository<TEn
         context.Entry(existingEntity).CurrentValues.SetValues(entity);
         var sucess = await context.SaveChangesAsync();
         return sucess > 0;
+    }
+
+    public async Task<List<TEntity>> GetAll()
+    {
+        return await context.Set<TEntity>().ToListAsync();
     }
 
     public virtual async Task<List<TEntity>> ListAscending(

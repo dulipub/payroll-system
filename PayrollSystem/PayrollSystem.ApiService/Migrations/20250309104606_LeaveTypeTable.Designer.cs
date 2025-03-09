@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PayrollSystem.ApiService.Core;
@@ -11,9 +12,11 @@ using PayrollSystem.ApiService.Core;
 namespace PayrollSystem.ApiService.Migrations
 {
     [DbContext(typeof(PayrollDbContext))]
-    partial class PayrollDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250309104606_LeaveTypeTable")]
+    partial class LeaveTypeTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -232,6 +235,8 @@ namespace PayrollSystem.ApiService.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Employees");
                 });
 
@@ -374,6 +379,9 @@ namespace PayrollSystem.ApiService.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<float>("DurationInDays")
+                        .HasColumnType("real");
+
                     b.Property<int>("EmployeeId")
                         .HasColumnType("integer");
 
@@ -385,9 +393,6 @@ namespace PayrollSystem.ApiService.Migrations
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("boolean");
-
-                    b.Property<float>("LeaveDuration")
-                        .HasColumnType("real");
 
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("integer");
@@ -429,35 +434,6 @@ namespace PayrollSystem.ApiService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("LeaveTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            MaximumAllowedDays = 14f,
-                            Type = "Annual Leave",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            MaximumAllowedDays = 7f,
-                            Type = "Sick Leave",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            MaximumAllowedDays = 7f,
-                            Type = "Casual Leave",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("PayrollSystem.ApiService.Models.Project", b =>
@@ -592,6 +568,15 @@ namespace PayrollSystem.ApiService.Migrations
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PayrollSystem.ApiService.Models.Employee", b =>
+                {
+                    b.HasOne("PayrollSystem.ApiService.Models.Identity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PayrollSystem.ApiService.Models.EmployeeProject", b =>

@@ -11,11 +11,7 @@ public class Employee : BaseModel
     public decimal HourlyRate { get; set; }
     public required string Name { get; set; }
     public required string NIC { get; set; }
-
     public string? UserId { get; set; }
-
-    [ForeignKey("UserId")]
-    public User User { get; set; } // Navigation property
 
     public List<BankAccount>? BankAccounts { get; set; }
 }

@@ -73,6 +73,7 @@ app.UseSwaggerUI();
 //API endpoints
 app.MapUserApi();
 app.MapEmployeeApi();
+app.MapLeavesApi();
 
 await app.Services.AddIdentityRoles();
 app.Run();
