@@ -70,9 +70,9 @@ app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-
+//API endpoints
 app.MapUserApi();
-
+app.MapEmployeeApi();
 
 await app.Services.AddIdentityRoles();
 app.Run();

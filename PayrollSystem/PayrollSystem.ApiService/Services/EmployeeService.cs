@@ -21,8 +21,8 @@ public interface IEmployeeService
 public class EmployeeService(
     IEmployeeRepository repository, 
     UserManager<User> userManager,
+    IRepository<BankAccount> bankAccountRepository,
     IRepository<Project> projectRepository,
-    IRepository<Department> departmentRepository,
     IRepository<EmployeeProject> employeeProjectRepository) : IEmployeeService
 {
     public async Task<EmployeeResponse> GetByUserId(string userId)
@@ -35,13 +35,28 @@ public class EmployeeService(
 
     public async Task<EmployeeResponse> Insert(InsertEmployeeRequest request)
     {
+        string userId = request.UserId ?? string.Empty;
         if (request.UserId == null)
-            await CreateUser(request);
+        {
+            var newUser = await CreateUser(request);
+            userId = newUser.Id;
+        }
 
         var employee = request.Adapt<Employee>();
+        employee.UserId = userId;
         var sucess = await repository.Add(employee);
+        
         if (sucess)
+        {
+            if (request.BankAccount != null)
+            {
+                var bank = request.BankAccount.Adapt<BankAccount>();
+                bank.EmployeeId = employee.Id;
+                await bankAccountRepository.Add(bank);
+            }
+
             return employee.Adapt<EmployeeResponse>();
+        }
         return null;
     }
 
@@ -66,7 +81,7 @@ public class EmployeeService(
 
         var results = employees.Adapt<List<EmployeeResponse>>();
         return new ListResponse<EmployeeResponse> { 
-            Results = results.Take(request.PageSize).Skip(request.PageNumber * request.PageSize).ToList(),
+            Results = results.Take(request.PageSize).Skip((request.PageNumber -1) * request.PageSize).ToList(),
             TotalRecords = results.Count
         };
     }
@@ -76,23 +91,24 @@ public class EmployeeService(
         throw new NotImplementedException();
     }
 
-    private async Task CreateUser(InsertEmployeeRequest request)
+    private async Task<User> CreateUser(InsertEmployeeRequest request)
     {
-        var existingUser = await userManager.FindByEmailAsync(request.Email);
+        var existingUser = await userManager.FindByEmailAsync(request.User.Email);
         if (existingUser != null)
             throw new Exception($"User with this email already exists, UserId : {existingUser.Id}");
-        existingUser = await userManager.FindByNameAsync(request.Username);
+        existingUser = await userManager.FindByNameAsync(request.User.Username);
         if (existingUser != null)
             throw new Exception($"User with this username already exists, UserId : {existingUser.Id}");
 
         var user = new User
         {
-            UserName = request.Username,
-            Email = request.Email,
+            UserName = request.User.Username,
+            Email = request.User.Email,
             TwoFactorEnabled = false
         };
 
-        var result = await userManager.CreateAsync(user, request.Password);
+        await userManager.CreateAsync(user, request.User.Password);
+        return user;
     }
 
     private async Task<List<Employee>> SearchByDepartment(EmployeeListRequest request)

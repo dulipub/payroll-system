@@ -60,7 +60,7 @@ public static class ServiceCollectionExtension
         services.AddTransient<IRepository<EmployeeProject>, BaseRepository<EmployeeProject>>();
         services.AddTransient<IRepository<Leave>, BaseRepository<Leave>>();
         services.AddTransient<IRepository<TimeSheet>, BaseRepository<TimeSheet>>();
-
+        services.AddTransient<IRepository<BankAccount>, BaseRepository<BankAccount>>();
 
         return services;
     }

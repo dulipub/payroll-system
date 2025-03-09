@@ -8,5 +8,6 @@ public class BankAccount : BaseModel
     public string? AccountName { get; set; }
     public string? Bank { get; set; }
     public string? Branch { get; set; }
+    public required int EmployeeId { get; set; }
 
 }

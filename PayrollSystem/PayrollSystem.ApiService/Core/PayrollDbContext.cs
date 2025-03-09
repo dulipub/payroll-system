@@ -9,16 +9,12 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
 {
 
     public DbSet<Employee> Employees { get; set; }
-
     public DbSet<Project> Projects { get; set; }
-
     public DbSet<Department> Departments { get; set; }
-
     public DbSet<TimeSheet> TimeSheets { get; set; }
-
     public DbSet<Leave> Leaves { get; set; }
-
     public DbSet<EmployeeProject> EmployeeProjects { get; set; }
+    public DbSet<BankAccount> BankAccounts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
