@@ -12,6 +12,7 @@ public interface IPayAdjustmentService
     Task<bool> Insert(CreatePayAdjustmentRequest request);
     Task<bool> Update(UpdatePayAdjustmentRequest request);
     Task<ListResponse<PayAdjustmentResponse>> List(PayAdjustmentListRequest request);
+    Task<bool> Delete(int id);
 }
 
 public class PayAdjustmentService(IRepository<PayAdjustment> repository) : IPayAdjustmentService
@@ -44,5 +45,10 @@ public class PayAdjustmentService(IRepository<PayAdjustment> repository) : IPayA
             Results = results.Take(request.PageSize).Skip((request.PageNumber - 1) * request.PageSize).ToList(),
             TotalRecords = results.Count
         };
+    }
+
+    public async Task<bool> Delete(int id)
+    {
+        return await repository.SoftDelete(id);
     }
 }

@@ -11,10 +11,10 @@ public interface IRepository<TEntity> where TEntity : class, IBaseModel
 {
     Task<bool> Add(TEntity entity);
     Task<bool> Update(TEntity entity);
-    Task<bool> Delete(TEntity entity);
+    Task<bool> Delete(int id);
+    Task<bool> SoftDelete(int id);
     Task<TEntity?> GetById(int id);
-
-    Task<List<TEntity>> GetAll();
+    Task<List<TEntity>> GetAll(bool checkactive = true)
 
     Task<List<TEntity>> ListAscending( Expression<Func<TEntity, bool>> filter = null, Expression<Func<TEntity, object>> orderBy = null,
         string includeProperties = "");
@@ -33,9 +33,24 @@ public class BaseRepository<TEntity>(PayrollDbContext context) : IRepository<TEn
         return sucess > 0;
     }
 
-    public async Task<bool> Delete(TEntity entity)
+    public async Task<bool> Delete(int id)
     {
+        var entity = await GetById(id);
+        if(entity == null)
+            return false;
+
         context.Set<TEntity>().Remove(entity);
+        var sucess = await context.SaveChangesAsync();
+        return sucess > 0;
+    }
+
+    public async Task<bool> SoftDelete(int id)
+    {
+        var entity = await GetById(id);
+        if (entity == null)
+            return false;
+
+        entity.IsActive = false;
         var sucess = await context.SaveChangesAsync();
         return sucess > 0;
     }
@@ -56,8 +71,13 @@ public class BaseRepository<TEntity>(PayrollDbContext context) : IRepository<TEn
         return sucess > 0;
     }
 
-    public async Task<List<TEntity>> GetAll()
+    public async Task<List<TEntity>> GetAll(bool checkactive = true)
     {
+        if (checkactive)
+        {
+            return await context.Set<TEntity>().Where(x => x.IsActive).ToListAsync();
+        }
+
         return await context.Set<TEntity>().ToListAsync();
     }
 

@@ -2,12 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using PayrollSystem.ApiService.Core;
 using PayrollSystem.ApiService.Helper;
-using PayrollSystem.ApiService.Requests.Employee;
 using PayrollSystem.ApiService.Requests.PayAdjustment;
-using PayrollSystem.ApiService.Requests.TimeSheet;
 using PayrollSystem.ApiService.Responses;
 using PayrollSystem.ApiService.Services;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace PayrollSystem.ApiService.Apis;
 
@@ -20,9 +17,8 @@ public static class PayAdjustmentApi
         api.MapGet("/{id}", Get);
 
         api.MapPost("/", Insert);
-        api.MapPost("/update", Update);
         api.MapPost("/list", List);
-        //add to employees
+        api.MapPost("/addemployees", AddPayAdjustmentToEmployees);
 
         api.MapDelete("/{id}", Delete);
 
@@ -31,12 +27,10 @@ public static class PayAdjustmentApi
 
     private static async Task<Results<Ok<PayAdjustmentResponse>, NotFound>> Get(
         int id,
-        HttpRequest httpRequest,
         [FromServices] IPayAdjustmentService service
     )
     {
-        var employeeId = int.Parse(httpRequest.GetClaim(AppConstants.JWT_EMPLOYEE));
-        var result = await service.Get(id, employeeId);
+        var result = await service.Get(id);
         if (result == null)
             return TypedResults.NotFound();
         return TypedResults.Ok(result);
@@ -44,23 +38,10 @@ public static class PayAdjustmentApi
 
     private static async Task<Results<Ok<bool>, BadRequest>> Insert(
         [FromBody] CreatePayAdjustmentRequest request,
-        [FromServices] IPayAdjustmentService service,
-        CancellationToken token
+        [FromServices] IPayAdjustmentService service
     )
     {
         var result = await service.Insert(request);
-        if (result == false)
-            return TypedResults.BadRequest();
-        return TypedResults.Ok(result);
-    }
-
-    private static async Task<Results<Ok<bool>, BadRequest>> Update(
-        [FromBody] UpdatePayAdjustmentRequest request,
-        [FromServices] IPayAdjustmentService service,
-        CancellationToken token
-    )
-    {
-        var result = await service.Update(request);
         if (result == false)
             return TypedResults.BadRequest();
         return TypedResults.Ok(result);
@@ -77,8 +58,23 @@ public static class PayAdjustmentApi
         return TypedResults.Ok(result);
     }
 
-    private static async Task Delete(HttpContext context)
+    private static async Task<Results<Ok<bool>, BadRequest>> AddPayAdjustmentToEmployees(
+        AddPayAdjustmentToEmployeesRequest request,
+        [FromServices] IEmployeePayAdjustmentService service)
     {
-        throw new NotImplementedException();
+        var result = await service.AddPayAdjustmentToEmployees(request);
+        if (result == false)
+            return TypedResults.BadRequest();
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<Results<Ok<bool>, BadRequest>> Delete(
+        int id,
+        [FromServices] IPayAdjustmentService service)
+    {
+        var result = await service.Delete(id);
+        if (result == false)
+            return TypedResults.BadRequest();
+        return TypedResults.Ok(result);
     }
 }

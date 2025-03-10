@@ -62,6 +62,10 @@ public static class ServiceCollectionExtension
         services.AddTransient<IRepository<TimeSheet>, BaseRepository<TimeSheet>>();
         services.AddTransient<IRepository<BankAccount>, BaseRepository<BankAccount>>();
         services.AddTransient<IRepository<LeaveType>, BaseRepository<LeaveType>>();
+        services.AddTransient<IRepository<PayAdjustment>, BaseRepository<PayAdjustment>>();
+        services.AddTransient<IRepository<EmployeePayAdjustment>, BaseRepository<EmployeePayAdjustment>>();
+        services.AddTransient<IRepository<Tax>, BaseRepository<Tax>>();
+        services.AddTransient<IRepository<Payroll>, BaseRepository<Payroll>>();
 
         return services;
     }
