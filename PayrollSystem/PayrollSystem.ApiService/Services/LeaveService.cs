@@ -48,7 +48,7 @@ public class LeaveService(
             leave.EmployeeId = request.EmployeeId;
 
             //check the leaves taken from January 1st
-            DateTime januaryFirst = new DateTime(DateTime.Now.Year, 1, 1);
+            DateOnly januaryFirst = new DateOnly(DateTime.Now.Year, 1, 1);
             var leaves = await repository.ListAscending(
                 x => x.EmployeeId == request.EmployeeId && x.LeaveTypeId == request.LeaveTypeId && x.Date > januaryFirst,
                 x => x.Id,
@@ -98,7 +98,7 @@ public class LeaveService(
         throw new NotImplementedException();
     }
 
-    private float CalculateTotalLeaves(List<Leave> leaves)
+    private double CalculateTotalLeaves(List<Leave> leaves)
     {
         return leaves.Sum(leave => leave.LeaveDuration);
     }

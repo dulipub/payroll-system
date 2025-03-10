@@ -14,7 +14,7 @@ public interface IRepository<TEntity> where TEntity : class, IBaseModel
     Task<bool> Delete(int id);
     Task<bool> SoftDelete(int id);
     Task<TEntity?> GetById(int id);
-    Task<List<TEntity>> GetAll(bool checkactive = true)
+    Task<List<TEntity>> GetAll(bool checkactive = true);
 
     Task<List<TEntity>> ListAscending( Expression<Func<TEntity, bool>> filter = null, Expression<Func<TEntity, object>> orderBy = null,
         string includeProperties = "");

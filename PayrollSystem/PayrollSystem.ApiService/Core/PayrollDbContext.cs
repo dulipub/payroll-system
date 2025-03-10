@@ -24,13 +24,6 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Leave>()
-        .Property(e => e.Date)
-        .HasConversion(
-            v => v.ToUniversalTime(),  // Convert to UTC when saving
-            v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // Ensure UTC when reading
-        );
-
         modelBuilder.Entity<LeaveType>().HasData(
             new LeaveType { Id = 1, Type = "Annual Leave", MaximumAllowedDays = 14, IsActive = true, IsPaid = true },
             new LeaveType { Id = 2, Type = "Sick Leave", MaximumAllowedDays = 7, IsActive = true, IsPaid = true },
@@ -62,7 +55,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             },
             new Tax
             {
-                Id = 2,
+                Id = 3,
                 Description = "PAYEE",
                 StartAmount = 141667,
                 EndAmount = 183333,
@@ -73,7 +66,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             },
             new Tax
             {
-                Id = 2,
+                Id = 4,
                 Description = "PAYEE",
                 StartAmount = 183333,
                 EndAmount = 225000,
@@ -84,7 +77,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             },
             new Tax
             {
-                Id = 2,
+                Id = 5,
                 Description = "PAYEE",
                 StartAmount = 225000,
                 EndAmount = 266667,
@@ -95,7 +88,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             },
             new Tax
             {
-                Id = 2,
+                Id = 6,
                 Description = "PAYEE",
                 StartAmount = 266667,
                 EndAmount = 308333,
@@ -106,7 +99,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             },
             new Tax
             {
-                Id = 2,
+                Id = 7,
                 Description = "PAYEE",
                 StartAmount = 308333,
                 EndAmount = float.MaxValue - 1,

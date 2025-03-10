@@ -13,7 +13,7 @@ public class TimesheetRepository(PayrollDbContext context) : BaseRepository<Time
     public async Task<List<TimeSheet>> GetByMonth(int Year, int Month, int EmployeeId)
     {
         //get 1st date using year and month
-        var startDate = new DateTime(Year, Month, 1);
+        var startDate = new DateOnly(Year, Month, 1);
         var endDate = startDate.AddMonths(1).AddDays(-1);
 
         var timesheets = await ListAscending(x => x.Date >= startDate && x.Date <= endDate && x.EmployeeId == EmployeeId);
