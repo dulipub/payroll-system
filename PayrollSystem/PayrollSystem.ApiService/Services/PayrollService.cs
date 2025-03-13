@@ -15,6 +15,7 @@ public class PayrollService(
     IRepository<TimeSheet> timesheetRepository,
     IRepository<Leave> leaveRepository,
     IRepository<Holiday> holidayRepository,
+    IRepository<Tax> taxRepository,
     IRepository<EmployeePayAdjustment> employeePayAdjustmentRepository,
     IEmployeeRepository employeeRepository) : IPayrollService
 {
@@ -36,11 +37,12 @@ public class PayrollService(
             if (employee == null)
                 continue;
 
-            await CalculatePay(payroll, employee);
+            var paysheet = await CalculatePay(payroll, employee);
+            await paysheetRepository.Add(paysheet);
         }
     }
 
-    private async Task CalculatePay(Payroll payroll, Employee employee)
+    private async Task<Paysheet> CalculatePay(Payroll payroll, Employee employee)
     {
         var paysheet = new Paysheet
         {
@@ -56,9 +58,13 @@ public class PayrollService(
 
         CalculateWorkHourAdjustments(employee, payroll, paysheet, monthlyTimeSheet);
 
-        await CalculateAdjustments(payroll, paysheet);
-        CalculateEPF(payroll, paysheet);
-        CalculateTax(payroll, paysheet);
+        await CalculateAdjustments(paysheet);
+        await CalculateGrossSalary(paysheet);
+        await CalculateEPF(paysheet);
+        await CalculateTax(paysheet);
+
+        paysheet.NetPay = paysheet.GrossPay - paysheet.EPF_EmployeePay - paysheet.TaxRecords!.Sum(x => x.Amount);
+        return paysheet;
     }
 
     private async Task CalculateTimeSheets(Payroll payroll, Paysheet paysheet, MonthlyTimeSheet monthlyTimeSheet)
@@ -161,7 +167,7 @@ public class PayrollService(
         }
     }
 
-    private async Task CalculateAdjustments(Payroll payroll, Paysheet paysheet)
+    private async Task CalculateAdjustments(Paysheet paysheet)
     {
         var adjustments = await employeePayAdjustmentRepository.ListAscending(x => x.EmployeeId == paysheet.EmployeeId, x => x.Id, "PayAdjustment");
         foreach(var adjustment in adjustments)
@@ -189,14 +195,52 @@ public class PayrollService(
         }
     }
 
-    private void CalculateEPF(Payroll payroll, Paysheet paysheet)
+    private async Task CalculateGrossSalary(Paysheet paysheet)
     {
-        throw new NotImplementedException();
+        paysheet.GrossPay = paysheet.BasicSalary + paysheet.TotalAllowances + paysheet.OverTimePay;
     }
 
-    private void CalculateTax(Payroll payroll, Paysheet paysheet)
+    private async Task CalculateEPF(Paysheet paysheet)
     {
-        throw new NotImplementedException();
+        paysheet.EPF_EmployeePay = paysheet.BasicSalary * AppConstants.EPF_EMPLOYEE_RATE;
+        paysheet.EPF_EmployerPay = paysheet.BasicSalary * AppConstants.EPF_EMPLOYERS_RATE;
+    }
+
+    private async Task CalculateTax(Paysheet paysheet)
+    {
+        var taxBrackets = await taxRepository.ListAscending(x => x.IsActive && x.Type == "APIT");
+        paysheet.TaxRecords = new List<TaxRecord>();
+
+        foreach (var bracket in taxBrackets)
+        {
+            if (paysheet.GrossPay >= bracket.StartAmount && paysheet.GrossPay <= bracket.EndAmount)
+            {
+                double taxAmount = (paysheet.GrossPay - bracket.StartAmount) * bracket.Percentage;
+                paysheet.TaxRecords.Add(new TaxRecord { 
+                    Amount = taxAmount, 
+                    Description = $"Tax Bracket: {bracket.StartAmount}-{bracket.EndAmount}",,
+                    StartAmount = bracket.StartAmount,
+                    EndAmount = bracket.EndAmount,
+                    TaxId = bracket.Id,
+                    PaysheetId = paysheet.Id
+                });
+                break; 
+            }
+            else if (paysheet.GrossPay >= bracket.StartAmount && paysheet.GrossPay > bracket.EndAmount)
+            {
+                double taxAmount = (bracket.EndAmount - bracket.StartAmount) * bracket.Percentage;
+                paysheet.TaxRecords.Add(new TaxRecord
+                {
+                    Amount = taxAmount,
+                    Description = $"Tax Bracket: {bracket.StartAmount}-{bracket.EndAmount}",
+                    StartAmount = bracket.StartAmount,
+                    EndAmount = bracket.EndAmount,
+                    TaxId = bracket.Id,
+                    PaysheetId = paysheet.Id
+                });
+                break;
+            }
+        }
     }
 }
 

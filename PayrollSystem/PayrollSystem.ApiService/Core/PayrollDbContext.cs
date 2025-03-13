@@ -35,7 +35,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             new Tax
             {
                 Id = 1,
-                Description = "PAYEE",
+                Type = "APIT",
                 StartAmount = 0,
                 EndAmount = 100000,
                 Percentage = 0,
@@ -45,7 +45,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             new Tax
             {
                 Id = 2,
-                Description = "PAYEE",
+                Type = "APIT",
                 StartAmount = 100000,
                 EndAmount = 141667,
                 Percentage = 0.06,
@@ -56,7 +56,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             new Tax
             {
                 Id = 3,
-                Description = "PAYEE",
+                Type = "APIT",
                 StartAmount = 141667,
                 EndAmount = 183333,
                 Percentage = 0.12,
@@ -67,7 +67,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             new Tax
             {
                 Id = 4,
-                Description = "PAYEE",
+                Type = "APIT",
                 StartAmount = 183333,
                 EndAmount = 225000,
                 Percentage = 0.18,
@@ -78,7 +78,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             new Tax
             {
                 Id = 5,
-                Description = "PAYEE",
+                Type = "APIT",
                 StartAmount = 225000,
                 EndAmount = 266667,
                 Percentage = 0.24,
@@ -89,7 +89,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             new Tax
             {
                 Id = 6,
-                Description = "PAYEE",
+                Type = "APIT",
                 StartAmount = 266667,
                 EndAmount = 308333,
                 Percentage = 0.30,
@@ -100,7 +100,7 @@ public class PayrollDbContext(DbContextOptions<PayrollDbContext> options) : Iden
             new Tax
             {
                 Id = 7,
-                Description = "PAYEE",
+                Type = "APIT",
                 StartAmount = 308333,
                 EndAmount = float.MaxValue - 1,
                 Percentage = 0.36,
